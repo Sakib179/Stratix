@@ -1,0 +1,577 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Custom Properties ─────────────────────────────────────────────────── */
+:root {
+  --bg-primary:   #0a0f1e;
+  --bg-secondary: #0f1629;
+  --bg-card:      rgba(17, 24, 39, 0.95);
+  --border:       rgba(99, 102, 241, 0.15);
+  --border-hover: rgba(99, 102, 241, 0.35);
+  --text-primary: #ffffff;
+  --text-muted:   #b0b8c8;
+  --accent:       #6366f1;
+  --accent-2:     #8b5cf6;
+  --radius:       12px;
+  --sidebar-w:    264px;
+  --sidebar-collapsed-w: 72px;
+  --navbar-h:     64px;
+  --transition:   0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Component-specific (overridden in light mode) */
+  --sidebar-bg:     rgba(10, 15, 30, 0.95);
+  --sidebar-border: rgba(99, 102, 241, 0.12);
+  --navbar-bg:      rgba(10, 15, 30, 0.85);
+  --navbar-border:  rgba(99, 102, 241, 0.1);
+}
+
+/* ─── Mobile: sidebar is overlay, content fills full width ───────────────── */
+@media (max-width: 1023px) {
+  :root { --sidebar-w: 0px; }
+  .page-container { padding: 16px; }
+}
+
+/* ─── Base Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: rgba(15, 22, 41, 0.6); }
+::-webkit-scrollbar-thumb  { background: rgba(99, 102, 241, 0.4); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
+
+/* ─── Selection ──────────────────────────────────────────────────────────────── */
+::selection        { background: rgba(99, 102, 241, 0.35); color: #fff; }
+::-moz-selection   { background: rgba(99, 102, 241, 0.35); color: #fff; }
+
+/* ─── Focus Ring ─────────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.7);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ─── Typography ─────────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: #f9fafb;
+}
+
+/* ─── Glass Card ─────────────────────────────────────────────────────────────── */
+@layer components {
+  .glass {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .glass-hover {
+    transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  }
+
+  .glass-hover:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(99, 102, 241, 0.15);
+    transform: translateY(-1px);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, #6366f1, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Brand gradient button */
+  .btn-brand {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    font-weight: 600;
+    border: none;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-brand::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .btn-brand:hover::before { opacity: 1; }
+  .btn-brand:hover { box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4); transform: translateY(-1px); }
+  .btn-brand:active { transform: translateY(0); }
+
+  /* Input base styles */
+  .input-base {
+    width: 100%;
+    background: rgba(17, 24, 39, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+    transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+    outline: none;
+  }
+
+  .input-base::placeholder { color: #4b5563; }
+
+  .input-base:focus {
+    border-color: rgba(99, 102, 241, 0.6);
+    background: rgba(17, 24, 39, 0.95);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+
+  .input-base:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Sidebar item */
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all var(--transition);
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+  }
+
+  .nav-item:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: #e5e7eb;
+  }
+
+  .nav-item.active {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+    font-weight: 600;
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background: linear-gradient(180deg, #6366f1, #8b5cf6);
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  /* Skeleton shimmer */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(31, 41, 55, 0.8) 25%,
+      rgba(55, 65, 81, 0.8) 50%,
+      rgba(31, 41, 55, 0.8) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+  }
+
+  /* Table styles */
+  .data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .data-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    background: rgba(17, 24, 39, 0.6);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .data-table th:first-child { border-radius: 10px 0 0 0; }
+  .data-table th:last-child  { border-radius: 0 10px 0 0; }
+
+  .data-table td {
+    padding: 14px 16px;
+    font-size: 0.875rem;
+    color: #d1d5db;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.06);
+    transition: background var(--transition);
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+
+  .data-table tr:hover td {
+    background: rgba(99, 102, 241, 0.05);
+  }
+
+  /* Page container */
+  .page-container {
+    padding: 28px 32px;
+    max-width: 1600px;
+  }
+
+  /* Glow dot */
+  .glow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  .glow-dot.green {
+    background: #10b981;
+    box-shadow: 0 0 6px #10b981;
+  }
+
+  .glow-dot.red {
+    background: #ef4444;
+    box-shadow: 0 0 6px #ef4444;
+  }
+
+  /* Animated mesh background */
+  .mesh-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.03) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+}
+
+/* ─── Utilities ──────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #6366f1, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .border-brand {
+    border-color: rgba(99, 102, 241, 0.3);
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .interactive {
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .interactive:hover { transform: translateY(-1px); }
+  .interactive:active { transform: translateY(0); }
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────────── */
+@keyframes fadeIn    { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp   { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scaleIn   { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes shimmer   { to { background-position: -200% 0; } }
+@keyframes float     { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Animated gradient text for headings */
+.gradient-text-animated {
+  background: linear-gradient(270deg, #6366f1, #a78bfa, #06b6d4, #8b5cf6, #6366f1);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 5s ease infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.03; }
+  50%       { opacity: 0.06; }
+}
+
+/* ─── Grid background for auth page ─────────────────────────────────────────── */
+.auth-grid-bg {
+  background-image: linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridPulse 4s ease-in-out infinite;
+}
+
+/* ─── React Hot Toast custom styles ─────────────────────────────────────────── */
+.toast-container > div {
+  background: #1c2436 !important;
+  color: #f9fafb !important;
+  border: 1px solid rgba(99, 102, 241, 0.2) !important;
+  border-radius: 12px !important;
+  font-size: 0.875rem !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   LIGHT MODE
+   Applied when <html class="light"> (toggled by ThemeToggle)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+html.light {
+  /* Core tokens */
+  --bg-primary:   #f4f2ff;
+  --bg-secondary: #ede9ff;
+  --bg-card:      rgba(255, 255, 255, 0.97);
+  --border:       rgba(99, 102, 241, 0.18);
+  --border-hover: rgba(99, 102, 241, 0.42);
+  --text-primary: #1e1b4b;
+  --text-muted:   #4b5563;
+  --accent:       #4f46e5;
+  --accent-2:     #7c3aed;
+
+  /* Layout component tokens */
+  --sidebar-bg:     #ffffff;
+  --sidebar-border: rgba(99, 102, 241, 0.16);
+  --navbar-bg:      rgba(255, 255, 255, 0.92);
+  --navbar-border:  rgba(99, 102, 241, 0.12);
+
+  color-scheme: light;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+html.light body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  background-image:
+    radial-gradient(ellipse at 0% 0%, rgba(99,102,241,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse at 100% 100%, rgba(139,92,246,0.05) 0%, transparent 55%);
+}
+
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6 { color: var(--text-primary); }
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────────── */
+html.light ::-webkit-scrollbar-track { background: rgba(237, 233, 255, 0.6); }
+html.light ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.28); }
+html.light ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.52); }
+
+/* ── Glass cards ───────────────────────────────────────────────────────────── */
+html.light .glass {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: 0 2px 16px rgba(99, 102, 241, 0.07), 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+html.light .glass-hover:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.14), 0 0 0 1px rgba(99, 102, 241, 0.18);
+  transform: translateY(-1px);
+}
+
+/* ── Input fields ──────────────────────────────────────────────────────────── */
+html.light .input-base {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+html.light .input-base::placeholder { color: #9ca3af; }
+
+html.light .input-base:focus {
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12), 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* ── Sidebar nav items ─────────────────────────────────────────────────────── */
+html.light .nav-item            { color: #4b5563; }
+html.light .nav-item:hover      { background: rgba(99, 102, 241, 0.09); color: #3730a3; }
+html.light .nav-item.active     { background: rgba(99, 102, 241, 0.13); color: #3730a3; }
+
+/* ── Skeleton ──────────────────────────────────────────────────────────────── */
+html.light .skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(99, 102, 241, 0.07) 25%,
+    rgba(99, 102, 241, 0.14) 50%,
+    rgba(99, 102, 241, 0.07) 75%
+  );
+}
+
+/* ── Data table ────────────────────────────────────────────────────────────── */
+html.light .data-table th {
+  background: rgba(237, 233, 255, 0.7);
+  color: #4b5563;
+  border-bottom-color: var(--border);
+}
+html.light .data-table td    { color: #374151; border-bottom-color: rgba(99,102,241,0.07); }
+html.light .data-table tr:hover td { background: rgba(99, 102, 241, 0.04); }
+
+/* ── Mesh & grid backgrounds ───────────────────────────────────────────────── */
+html.light .mesh-bg {
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.04) 0%, transparent 50%);
+}
+
+html.light .auth-grid-bg {
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.07) 1px, transparent 1px);
+}
+
+/* ── Toast ─────────────────────────────────────────────────────────────────── */
+html.light .toast-container > div {
+  background: #ffffff !important;
+  color: #1e1b4b !important;
+  border: 1px solid rgba(99, 102, 241, 0.22) !important;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.12) !important;
+}
+
+/* Landing page always stays dark — exempt its text from light-mode overrides */
+html.light .landing-page .text-white     { color: #ffffff !important; }
+html.light .landing-page .text-gray-100  { color: #f3f4f6 !important; }
+html.light .landing-page .text-gray-200  { color: #e5e7eb !important; }
+html.light .landing-page .text-gray-300  { color: #d1d5db !important; }
+html.light .landing-page .text-gray-400  { color: #9ca3af !important; }
+html.light .landing-page .text-gray-500  { color: #6b7280 !important; }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TAILWIND UTILITY OVERRIDES — light mode
+   (must use !important to beat utility specificity)
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* White / light text → dark */
+html.light .text-white            { color: #1e1b4b !important; }
+html.light .text-gray-100         { color: #1e1b4b !important; }
+html.light .text-gray-200         { color: #1e1b4b !important; }
+html.light .text-gray-300         { color: #374151 !important; }
+html.light .text-gray-400         { color: #4b5563 !important; }
+html.light .text-gray-500         { color: #6b7280 !important; }
+html.light .text-gray-600         { color: #6b7280 !important; }
+html.light .text-surface-50       { color: #1e1b4b !important; }
+html.light .text-surface-100      { color: #374151 !important; }
+html.light .text-surface-200      { color: #4b5563 !important; }
+html.light .text-surface-300      { color: #6b7280 !important; }
+
+/* Surface backgrounds */
+html.light .bg-surface-900        { background-color: #f4f2ff !important; }
+html.light .bg-surface-800        { background-color: #ede9ff !important; }
+html.light .bg-surface-700        { background-color: #e8e4ff !important; }
+html.light .bg-surface-600        { background-color: #f0eeff !important; }
+html.light .bg-surface-500        { background-color: rgba(99, 102, 241, 0.09) !important; }
+
+/* Surface bg with opacity (dropdowns, hover states) */
+html.light .bg-surface-600\/30              { background-color: rgba(99, 102, 241, 0.07) !important; }
+html.light .bg-surface-600\/40              { background-color: rgba(99, 102, 241, 0.09) !important; }
+html.light .bg-surface-600\/50              { background-color: rgba(99, 102, 241, 0.12) !important; }
+html.light .hover\:bg-surface-600\/30:hover { background-color: rgba(99, 102, 241, 0.07) !important; }
+html.light .hover\:bg-surface-600\/40:hover { background-color: rgba(99, 102, 241, 0.09) !important; }
+html.light .hover\:bg-surface-600\/50:hover { background-color: rgba(99, 102, 241, 0.12) !important; }
+
+/* White opacity backgrounds */
+html.light .bg-white\/5              { background-color: rgba(99, 102, 241, 0.05) !important; }
+html.light .bg-white\/10             { background-color: rgba(99, 102, 241, 0.08) !important; }
+html.light .hover\:bg-white\/3:hover { background-color: rgba(99, 102, 241, 0.04) !important; }
+html.light .hover\:bg-white\/5:hover { background-color: rgba(99, 102, 241, 0.06) !important; }
+
+/* White borders */
+html.light .border-white\/5        { border-color: rgba(99, 102, 241, 0.11) !important; }
+html.light .border-white\/10       { border-color: rgba(99, 102, 241, 0.15) !important; }
+html.light .border-surface-500     { border-color: rgba(99, 102, 241, 0.2) !important; }
+
+/* Divide (table row separators) */
+html.light .divide-white\/5 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Dashboard AppProviders loading screen */
+html.light .bg-surface-900.flex { background-color: #f4f2ff !important; }
+
+/* Notification / user dropdown panel border */
+html.light [style*="rgba(99,102,241,0.1)"] { border-color: rgba(99, 102, 241, 0.14) !important; }
+
+/* Specific dark inline bg overrides (used in expense card rows, modals, etc.) */
+html.light .bg-red-500\/10         { background-color: rgba(239, 68, 68, 0.08) !important; }
+html.light .bg-red-500\/20         { background-color: rgba(239, 68, 68, 0.13) !important; }
+html.light .hover\:bg-red-500\/10:hover { background-color: rgba(239, 68, 68, 0.1) !important; }
+html.light .hover\:bg-brand-500\/10:hover { background-color: rgba(99, 102, 241, 0.1) !important; }
+
+/* Active/selected nav bell button */
+html.light .bg-brand-500\/20 { background-color: rgba(99, 102, 241, 0.13) !important; }
+
+/* Sidebar tooltip arrow color (must match bg-surface-600 override) */
+html.light .border-r-surface-600 { border-right-color: #f0eeff !important; }
+
+/* Sidebar tooltip & dropdowns hover items */
+html.light .hover\:bg-white\/10:hover { background-color: rgba(99, 102, 241, 0.09) !important; }
+
+/* Sidebar tooltip border */
+html.light .shadow-xl.bg-surface-600 {
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15), 0 0 0 1px rgba(99, 102, 241, 0.15) !important;
+}
